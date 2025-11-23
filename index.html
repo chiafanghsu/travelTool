@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>名古屋滑雪 2026 旅遊小工具</title>
+    <style>
+      :root {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          system-ui, -system-ui, "Segoe UI", sans-serif;
+        color-scheme: dark;
+        --bg: #020617;
+        --bg-soft: #020617;
+        --card: #020617;
+        --border-subtle: rgba(148, 163, 184, 0.4);
+        --accent: #38bdf8;
+        --accent-soft: rgba(56, 189, 248, 0.08);
+        --text-main: #e5e7eb;
+        --text-muted: #9ca3af;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+        color: var(--text-main);
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 0.75rem 1rem 0.5rem;
+        backdrop-filter: blur(16px);
+        background: linear-gradient(
+          to bottom,
+          rgba(15, 23, 42, 0.96),
+          rgba(15, 23, 42, 0.86),
+          transparent
+        );
+        border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      header small {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-top: 0.4rem;
+      }
+
+      .chip {
+        font-size: 0.7rem;
+        padding: 0.18rem 0.6rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        color: var(--text-muted);
+        background: rgba(15, 23, 42, 0.96);
+      }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0.8rem 0.9rem 1.5rem;
+      }
+
+      .section {
+        margin-top: 1.2rem;
+      }
+
+      .section h2 {
+        margin: 0 0 0.45rem;
+        font-size: 0.86rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--text-muted);
+      }
+
+      .day-card {
+        border-radius: 1rem;
+        padding: 0.8rem 0.85rem 0.9rem;
+        border: 1px solid var(--border-subtle);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 55%),
+          linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.85);
+        margin-bottom: 0.8rem;
+      }
+
+      .day-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.6rem;
+      }
+
+      .day-header-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.15rem;
+      }
+
+      .day-title {
+        font-size: 0.94rem;
+        font-weight: 600;
+      }
+
+      .day-sub {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .day-weather {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+      }
+
+      .day-weather .temp {
+        color: var(--text-main);
+        font-weight: 500;
+      }
+
+      .pill {
+        align-self: flex-start;
+        font-size: 0.68rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.65);
+        color: var(--text-muted);
+        white-space: nowrap;
+      }
+
+      .timeline {
+        margin-top: 0.4rem;
+        border-radius: 0.8rem;
+        border: 1px solid rgba(51, 65, 85, 0.9);
+        background: radial-gradient(circle at top left, #020617, #020617);
+        padding: 0.35rem 0.5rem 0.4rem 0.6rem;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 0.65rem;
+        padding: 0.4rem 0;
+      }
+
+      .item:not(:last-child) {
+        border-bottom: 1px dashed rgba(51, 65, 85, 0.9);
+      }
+
+      .time-col {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        padding-top: 0.15rem;
+        min-width: 3.2rem;
+      }
+
+      .content-col {
+        min-width: 0;
+      }
+
+      .title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.4rem;
+      }
+
+      .title {
+        font-size: 0.86rem;
+        font-weight: 500;
+        line-height: 1.25;
+      }
+
+      .tag-row {
+        margin-top: 0.16rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.22rem;
+        font-size: 0.66rem;
+        color: var(--text-muted);
+      }
+
+      .tag {
+        padding: 0.06rem 0.4rem;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+      }
+
+      .note {
+        margin-top: 0.26rem;
+        font-size: 0.76rem;
+        color: var(--text-muted);
+        line-height: 1.45;
+        white-space: pre-wrap;
+      }
+
+      .btn-row {
+        margin-top: 0.3rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+
+      .btn {
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        padding: 0.24rem 0.65rem;
+        background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.13),
+          rgba(15, 23, 42, 1)
+        );
+        color: var(--text-main);
+        font-size: 0.72rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.26rem;
+      }
+
+      .btn.secondary {
+        background: rgba(15, 23, 42, 1);
+        border-style: dashed;
+      }
+
+      .btn span.icon {
+        font-size: 0.9em;
+      }
+
+      /* 代辦 & 行李 */
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+
+      .todo-pill {
+        border-radius: 999px;
+        padding: 0.2rem 0.6rem;
+        border: 1px solid rgba(148, 163, 184, 0.65);
+        background: rgba(15, 23, 42, 0.96);
+        color: var(--text-main);
+        font-size: 0.72rem;
+      }
+
+      .todo-pill.done {
+        text-decoration: line-through;
+        color: var(--text-muted);
+        border-style: dashed;
+      }
+
+      .todo-pill::before {
+        content: "□ ";
+        opacity: 0.85;
+      }
+
+      .todo-pill.done::before {
+        content: "✓ ";
+        color: #4ade80;
+      }
+
+      .packing-grid {
+        margin-top: 0.3rem;
+        border-radius: 0.8rem;
+        border: 1px solid rgba(51, 65, 85, 0.95);
+        background: rgba(15, 23, 42, 0.98);
+        padding: 0.4rem 0.55rem 0.2rem;
+        font-size: 0.72rem;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.25rem 0.4rem;
+      }
+
+      .pack-item {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: var(--text-muted);
+      }
+
+      .pack-dot {
+        width: 0.26rem;
+        height: 0.26rem;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.85);
+        flex-shrink: 0;
+      }
+
+      .pack-main {
+        display: flex;
+        flex-direction: column;
+        gap: 0.08rem;
+      }
+
+      .pack-name {
+        color: var(--text-main);
+      }
+
+      .pack-meta {
+        font-size: 0.68rem;
+        opacity: 0.85;
+      }
+
+      /* 大字卡 Overlay */
+
+      #bigcard-overlay {
+        position: fixed;
+        inset: 0;
+        padding: 1.4rem 1.2rem 1.5rem;
+        display: none;
+        z-index: 50;
+        background: radial-gradient(
+          circle at top,
+          rgba(15, 23, 42, 0.98),
+          #020617 55%,
+          #000 100%
+        );
+      }
+
+      #bigcard-overlay.active {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .bigcard-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .bigcard-chip {
+        font-size: 0.7rem;
+        padding: 0.18rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: var(--text-muted);
+      }
+
+      .bigcard-close {
+        border-radius: 999px;
+        width: 2.1rem;
+        height: 2.1rem;
+        border: 1px solid rgba(148, 163, 184, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        color: var(--text-main);
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .bigcard-main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1.2rem 0.4rem;
+      }
+
+      .bigcard-text {
+        font-size: 2.4rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        line-height: 1.25;
+      }
+
+      .bigcard-sub {
+        margin-top: 0.8rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .bigcard-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      /* 記帳 / 分帳 */
+
+      .expense-card {
+        border-radius: 1rem;
+        padding: 0.8rem 0.9rem 0.9rem;
+        border: 1px solid var(--border-subtle);
+        background: linear-gradient(
+          135deg,
+          rgba(15, 23, 42, 0.98),
+          rgba(15, 23, 42, 0.95)
+        );
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.8);
+        font-size: 0.78rem;
+      }
+
+      .expense-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem 0.6rem;
+        margin-bottom: 0.65rem;
+      }
+
+      .expense-form label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.18rem;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+      }
+
+      .expense-form input,
+      .expense-form select {
+        border-radius: 0.5rem;
+        border: 1px solid rgba(51, 65, 85, 0.9);
+        padding: 0.25rem 0.45rem;
+        background: #020617;
+        color: var(--text-main);
+        font-size: 0.8rem;
+      }
+
+      .expense-form button {
+        grid-column: 1 / -1;
+        border-radius: 999px;
+        border: none;
+        padding: 0.35rem 0.8rem;
+        background: var(--accent);
+        color: #0b1120;
+        font-weight: 600;
+        font-size: 0.8rem;
+      }
+
+      .expense-summary {
+        font-size: 0.76rem;
+        color: var(--text-main);
+        margin-bottom: 0.4rem;
+      }
+
+      .expense-list {
+        border-top: 1px solid rgba(51, 65, 85, 0.9);
+        margin-top: 0.4rem;
+        padding-top: 0.35rem;
+      }
+
+      .expense-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.4rem;
+        padding: 0.25rem 0;
+      }
+
+      .expense-main {
+        display: flex;
+        flex-direction: column;
+        gap: 0.12rem;
+      }
+
+      .expense-title {
+        font-size: 0.78rem;
+      }
+
+      .expense-meta {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+      }
+
+      .expense-amount {
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .expense-hint {
+        margin-top: 0.45rem;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+      }
+
+      @media (min-width: 720px) {
+        main {
+          display: grid;
+          grid-template-columns: minmax(0, 3fr);
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>名古屋滑雪 2026</h1>
+      <small>Travel Console · 2026-01-17 → 01-25</small>
+      <div class="chips">
+        <span class="chip">🏂 自駕 · 滑雪 · 合掌村 · 地獄谷</span>
+        <span class="chip">👥 你 ＋ 旅伴</span>
+        <span class="chip">🔋 V2：天氣 ＋ 記帳</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <h2>行程 · Itinerary</h2>
+        <div id="days"></div>
+      </section>
+
+      <section class="section">
+        <h2>代辦 · Checklist</h2>
+        <div id="todos" class="pill-row"></div>
+      </section>
+
+      <section class="section">
+        <h2>行李 · Packing</h2>
+        <div id="packing" class="packing-grid"></div>
+      </section>
+
+      <section class="section">
+        <h2>記帳 · Expense</h2>
+        <div id="expense-app" class="expense-card">
+          <form id="expense-form" class="expense-form">
+            <label>
+              項目
+              <input id="exp-desc" required />
+            </label>
+            <label>
+              金額（日圓）
+              <input
+                id="exp-amount"
+                type="number"
+                min="0"
+                step="1"
+                required
+              />
+            </label>
+            <label>
+              付款者
+              <select id="exp-payer">
+                <option value="你">你</option>
+                <option value="旅伴">旅伴</option>
+              </select>
+            </label>
+            <label>
+              參與人數（平均分攤）
+              <select id="exp-people">
+                <option value="2">你 ＋ 旅伴</option>
+                <option value="1">只有自己</option>
+              </select>
+            </label>
+            <button type="submit">記一筆</button>
+          </form>
+          <div id="expense-summary" class="expense-summary"></div>
+          <div id="expense-list" class="expense-list"></div>
+          <div class="expense-hint">
+            🔁 若已設定 Firebase，此區會在旅伴手機上即時同步；未設定時則儲存在本機（localStorage）。
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 大字卡 Overlay -->
+    <div id="bigcard-overlay">
+      <div class="bigcard-top">
+        <div class="bigcard-chip" id="bigcard-day">DAY ?</div>
+        <button
+          class="bigcard-close"
+          id="bigcard-close"
+          aria-label="關閉大字卡"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="bigcard-main">
+        <div>
+          <div class="bigcard-text" id="bigcard-text">高山老街</div>
+          <div class="bigcard-sub" id="bigcard-sub">
+            給店員 / 司機看的大字卡
+          </div>
+        </div>
+      </div>
+      <div class="bigcard-bottom">
+        <span id="bigcard-extra">需要導航請回行程頁面點「開啟地圖」。</span>
+        <span>點右上角 ✕ 返回行程</span>
+      </div>
+    </div>
+
+    <!-- 1) 載入行程/資料 -->
+    <script src="data.js"></script>
+
+    <!-- 2) Firebase（要多人同步記帳就填 Firebase Config；不填就會自動退回本機版） -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script>
+      // 若你想用 Firebase 做多人共用記帳：
+      // 1. 到 Firebase Console 建立專案
+      // 2. 建立 Web App
+      // 3. 把給你的設定貼到這裡
+      const firebaseConfig = {
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+      };
+
+      if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+        try {
+          firebase.initializeApp(firebaseConfig);
+        } catch (e) {
+          // 已初始化之類錯誤可以忽略
+          console.warn(e);
+        }
+      }
+    </script>
+
+    <!-- 3) 主程式：渲染、天氣、大字卡、記帳 -->
+    <script>
+      const dayNames = ["日", "一", "二", "三", "四", "五", "六"];
+      const tripStart = new Date(tripMeta.startDate + "T00:00:00");
+
+      function calcTripDay(dateObj) {
+        const ms = dateObj.getTime() - tripStart.getTime();
+        return Math.floor(ms / 86400000) + 1;
+      }
+
+      function formatDateLabel(dateIso) {
+        const d = new Date(dateIso + "T00:00:00");
+        const month = d.getMonth() + 1;
+        const date = d.getDate();
+        const dow = dayNames[d.getDay()];
+        const day = calcTripDay(d);
+        return `D${day} · ${month}/${date}（週${dow}）`;
+      }
+
+      function renderDays() {
+        const root = document.getElementById("days");
+        root.innerHTML = "";
+
+        itinerary.forEach((day) => {
+          const card = document.createElement("article");
+          card.className = "day-card";
+
+          const header = document.createElement("div");
+          header.className = "day-header";
+
+          const left = document.createElement("div");
+          const title = document.createElement("div");
+          title.className = "day-title";
+          title.textContent = formatDateLabel(day.date);
+
+          const sub = document.createElement("div");
+          sub.className = "day-sub";
+          sub.textContent = `共 ${day.items.length} 個節點`;
+
+          left.appendChild(title);
+          left.appendChild(sub);
+
+          const right = document.createElement("div");
+          right.className = "day-header-right";
+
+          const weather = document.createElement("div");
+          weather.className = "day-weather";
+          weather.dataset.date = day.date;
+          const loc = dayLocations && dayLocations[day.date];
+          weather.textContent = loc
+            ? `⛅ ${loc.shortLabel || loc.label} · 載入中…`
+            : "⛅ 未設定地點";
+
+          const pill = document.createElement("div");
+          pill.className = "pill";
+          const hasHotel = day.items.some((i) =>
+            /CHECK IN/i.test(i.name)
+          );
+          pill.textContent = hasHotel ? "🏨 Check-in 日" : "🛣 移動 / 景點日";
+
+          right.appendChild(weather);
+          right.appendChild(pill);
+
+          header.appendChild(left);
+          header.appendChild(right);
+
+          const timeline = document.createElement("div");
+          timeline.className = "timeline";
+
+          day.items.forEach((item) => {
+            const row = document.createElement("div");
+            row.className = "item";
+
+            const timeCol = document.createElement("div");
+            timeCol.className = "time-col";
+            timeCol.textContent = item.time;
+
+            const contentCol = document.createElement("div");
+            contentCol.className = "content-col";
+
+            const titleRow = document.createElement("div");
+            titleRow.className = "title-row";
+            const t = document.createElement("div");
+            t.className = "title";
+            t.textContent = item.name;
+            titleRow.appendChild(t);
+
+            const tags = document.createElement("div");
+            tags.className = "tag-row";
+
+            if (item.url) {
+              const tag = document.createElement("span");
+              tag.className = "tag";
+              tag.textContent = "📍 地點 / 地圖";
+              tags.appendChild(tag);
+            }
+            if (/CHECK IN/i.test(item.name)) {
+              const tag = document.createElement("span");
+              tag.className = "tag";
+              tag.textContent = "🏨 住宿";
+              tags.appendChild(tag);
+            }
+            if (/起飛|降落|機場/i.test(item.name)) {
+              const tag = document.createElement("span");
+              tag.className = "tag";
+              tag.textContent = "✈️ 航班";
+              tags.appendChild(tag);
+            }
+            if (/滑雪|高原|白馬|妙高/i.test(item.name)) {
+              const tag = document.createElement("span");
+              tag.className = "tag";
+              tag.textContent = "🏂 滑雪";
+              tags.appendChild(tag);
+            }
+
+            contentCol.appendChild(titleRow);
+            if (tags.childElementCount) contentCol.appendChild(tags);
+
+            if (item.note) {
+              const note = document.createElement("div");
+              note.className = "note";
+              note.textContent = item.note;
+              contentCol.appendChild(note);
+            }
+
+            const btnRow = document.createElement("div");
+            btnRow.className = "btn-row";
+
+            const bigBtn = document.createElement("button");
+            bigBtn.type = "button";
+            bigBtn.className = "btn";
+            bigBtn.innerHTML =
+              '<span class="icon">🔍</span><span>大字卡</span>';
+            bigBtn.addEventListener("click", () =>
+              openBigCard(day.date, item)
+            );
+            btnRow.appendChild(bigBtn);
+
+            if (item.url) {
+              const mapBtn = document.createElement("a");
+              mapBtn.className = "btn secondary";
+              mapBtn.href = item.url;
+              mapBtn.target = "_blank";
+              mapBtn.rel = "noopener noreferrer";
+              mapBtn.innerHTML =
+                '<span class="icon">📍</span><span>開啟地圖</span>';
+              btnRow.appendChild(mapBtn);
+            }
+
+            contentCol.appendChild(btnRow);
+
+            row.appendChild(timeCol);
+            row.appendChild(contentCol);
+            timeline.appendChild(row);
+          });
+
+          card.appendChild(header);
+          card.appendChild(timeline);
+          root.appendChild(card);
+        });
+      }
+
+      function renderTodos() {
+        const root = document.getElementById("todos");
+        root.innerHTML = "";
+        todos.forEach((t) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "todo-pill" + (t.done ? " done" : "");
+          btn.textContent = t.title;
+          btn.addEventListener("click", () => {
+            t.done = !t.done;
+            btn.className = "todo-pill" + (t.done ? " done" : "");
+          });
+          root.appendChild(btn);
+        });
+      }
+
+      function renderPacking() {
+        const root = document.getElementById("packing");
+        root.innerHTML = "";
+        packing.forEach((p) => {
+          const item = document.createElement("div");
+          item.className = "pack-item";
+
+          const dot = document.createElement("div");
+          dot.className = "pack-dot";
+          if (p.checked) dot.style.opacity = "1";
+          item.appendChild(dot);
+
+          const main = document.createElement("div");
+          main.className = "pack-main";
+
+          const name = document.createElement("div");
+          name.className = "pack-name";
+          name.textContent = p.name + (p.checked ? " ✓" : "");
+          main.appendChild(name);
+
+          const meta = document.createElement("div");
+          meta.className = "pack-meta";
+          meta.textContent = `${p.bag} · ${p.type}`;
+          main.appendChild(meta);
+
+          item.appendChild(main);
+          root.appendChild(item);
+        });
+      }
+
+      // ====== 天氣 API：Open-Meteo（免費，無需金鑰） ======
+      function initWeather() {
+        if (!window.dayLocations) return;
+        itinerary.forEach((day) => {
+          const loc = dayLocations[day.date];
+          if (!loc) return;
+          fetchWeatherForDay(day.date, loc);
+        });
+      }
+
+      function fetchWeatherForDay(date, loc) {
+        const params = new URLSearchParams({
+          latitude: loc.lat,
+          longitude: loc.lon,
+          daily: "temperature_2m_max,temperature_2m_min",
+          timezone: tripMeta.timezone || "Asia/Tokyo",
+          start_date: date,
+          end_date: date,
+        });
+        fetch("https://api.open-meteo.com/v1/forecast?" + params.toString())
+          .then((r) => r.json())
+          .then((data) => {
+            if (
+              !data.daily ||
+              !data.daily.temperature_2m_max ||
+              !data.daily.temperature_2m_max.length
+            ) {
+              updateWeatherBadge(date, loc, null, null, true);
+              return;
+            }
+            const max = data.daily.temperature_2m_max[0];
+            const min = data.daily.temperature_2m_min[0];
+            updateWeatherBadge(date, loc, max, min, false);
+          })
+          .catch((err) => {
+            console.error("weather error", err);
+            updateWeatherBadge(date, loc, null, null, true);
+          });
+      }
+
+      function updateWeatherBadge(date, loc, max, min, isError) {
+        const el = document.querySelector(
+          `.day-weather[data-date="${date}"]`
+        );
+        if (!el) return;
+        if (isError || max == null || min == null) {
+          el.textContent = `⛅ ${loc.shortLabel || loc.label} · 無法取得天氣`;
+          return;
+        }
+        el.innerHTML = `⛅ <span class="temp">${Math.round(
+          max
+        )}° / ${Math.round(min)}°</span> · ${loc.shortLabel || loc.label}`;
+      }
+
+      // ====== 大字卡控制 ======
+      const overlay = document.getElementById("bigcard-overlay");
+      const bigText = document.getElementById("bigcard-text");
+      const bigSub = document.getElementById("bigcard-sub");
+      const bigDay = document.getElementById("bigcard-day");
+      const bigExtra = document.getElementById("bigcard-extra");
+      const bigClose = document.getElementById("bigcard-close");
+
+      function openBigCard(dateIso, item) {
+        bigText.textContent = item.name;
+        bigSub.textContent = item.note || "給店員 / 司機看的大字卡";
+        bigDay.textContent = formatDateLabel(dateIso);
+        bigExtra.textContent = item.url
+          ? "需要導航可回行程頁面點「開啟地圖」。"
+          : "若要導航，可以在行程頁面補上地圖連結。";
+        overlay.classList.add("active");
+      }
+
+      function closeBigCard() {
+        overlay.classList.remove("active");
+      }
+
+      bigClose.addEventListener("click", closeBigCard);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeBigCard();
+      });
+
+      // ====== 記帳 / 分帳 ======
+      let expenseBackend = "local"; // "local" or "firebase"
+      let expenseCol = null;
+      let expenses = [];
+      let expenseUnsubscribe = null;
+
+      function setupExpense() {
+        const form = document.getElementById("expense-form");
+        if (!form) return;
+
+        // 判斷有沒有 Firebase 設定
+        if (
+          window.firebase &&
+          firebase.apps &&
+          firebase.apps.length &&
+          firebase.firestore
+        ) {
+          expenseBackend = "firebase";
+          expenseCol = firebase.firestore().collection("nagoya-2026-expenses");
+          expenseUnsubscribe = expenseCol
+            .orderBy("createdAt")
+            .onSnapshot(
+              (snap) => {
+                expenses = snap.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+                renderExpenseSummary();
+                renderExpenseList();
+              },
+              (err) => {
+                console.error(err);
+              }
+            );
+        } else {
+          expenseBackend = "local";
+          try {
+            const raw = localStorage.getItem("nagoya-2026-expenses");
+            if (raw) expenses = JSON.parse(raw);
+          } catch (e) {
+            console.warn(e);
+          }
+          renderExpenseSummary();
+          renderExpenseList();
+        }
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const desc = document.getElementById("exp-desc").value.trim();
+          const amount = Number(
+            document.getElementById("exp-amount").value
+          );
+          const payer = document.getElementById("exp-payer").value;
+          const people = Number(
+            document.getElementById("exp-people").value
+          ) || 1;
+
+          if (!desc || !amount) return;
+
+          const payload = {
+            description: desc,
+            amountJPY: amount,
+            payer,
+            people,
+            createdAt: new Date().toISOString(),
+          };
+
+          if (expenseBackend === "firebase" && expenseCol) {
+            expenseCol
+              .add({
+                ...payload,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              })
+              .catch(console.error);
+            form.reset();
+            document.getElementById("exp-payer").value = "你";
+            document.getElementById("exp-people").value = "2";
+          } else {
+            payload.id = Date.now().toString();
+            expenses.push(payload);
+            try {
+              localStorage.setItem(
+                "nagoya-2026-expenses",
+                JSON.stringify(expenses)
+              );
+            } catch (e) {
+              console.warn(e);
+            }
+            form.reset();
+            document.getElementById("exp-payer").value = "你";
+            document.getElementById("exp-people").value = "2";
+            renderExpenseSummary();
+            renderExpenseList();
+          }
+        });
+      }
+
+      function renderExpenseSummary() {
+        const root = document.getElementById("expense-summary");
+        if (!root) return;
+        if (!expenses.length) {
+          root.textContent = "目前尚未有紀錄。";
+          return;
+        }
+        const names = ["你", "旅伴"];
+        const balance = { 你: 0, 旅伴: 0 };
+        expenses.forEach((exp) => {
+          const share = exp.amountJPY / (exp.people || 1);
+          names.slice(0, exp.people || 1).forEach((name) => {
+            balance[name] -= share;
+          });
+          if (balance[exp.payer] !== undefined) {
+            balance[exp.payer] += exp.amountJPY;
+          }
+        });
+        const diff = Math.round(balance["你"] - balance["旅伴"]);
+        let text;
+        if (diff > 0) {
+          text = `目前旅伴需給你約 ${diff.toLocaleString()} 日圓。`;
+        } else if (diff < 0) {
+          text = `目前你需給旅伴約 ${Math.abs(diff).toLocaleString()} 日圓。`;
+        } else {
+          text = "目前雙方剛好打平。";
+        }
+        root.textContent = text;
+      }
+
+      function renderExpenseList() {
+        const root = document.getElementById("expense-list");
+        if (!root) return;
+        if (!expenses.length) {
+          root.innerHTML = "";
+          return;
+        }
+        root.innerHTML = expenses
+          .map((exp) => {
+            const when = exp.createdAt
+              ? String(exp.createdAt).slice(0, 16).replace("T", " ")
+              : "";
+            return `<div class="expense-row">
+              <div class="expense-main">
+                <div class="expense-title">${exp.description}</div>
+                <div class="expense-meta">${when} · ${exp.payer} 先付 · ${
+              exp.people || 1
+            } 人分攤</div>
+              </div>
+              <div class="expense-amount">¥${Number(
+                exp.amountJPY
+              ).toLocaleString()}</div>
+            </div>`;
+          })
+          .join("");
+      }
+
+      // ====== 初始化 ======
+      function init() {
+        renderDays();
+        renderTodos();
+        renderPacking();
+        initWeather();
+        setupExpense();
+      }
+
+      window.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
+</html>
